@@ -57,13 +57,17 @@ Thumbs.db
 
 .env
 
-# =====================================================
-# OUTPUTS GENERADOS
-# =====================================================
+# ==========================================
+# Generated outputs
+# ==========================================
 
-outputs/
-reports/
-figures/
+output/charts/*
+output/reports/*
+
+# Mantener estructura
+!output/charts/.gitkeep
+!output/reports/.gitkeep
+
 
 # =====================================================
 # LOGS
