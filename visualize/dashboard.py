@@ -1,6 +1,7 @@
 # visualize/dashboard.py
 
 from visualize.bar import BarPlot
+from visualize.grouped_bar import GroupedBarPlot
 
 
 class DashboardCharts:
@@ -17,6 +18,7 @@ class DashboardCharts:
         self.infrastructure = infrastructure
 
         self.bar = BarPlot()
+        self.grouped = GroupedBarPlot()
 
     def build_all(self):
 
@@ -78,6 +80,24 @@ class DashboardCharts:
             value_col="total",
             title="Disponibilidad de vectores",
             filename="has_vector.png"
+        )
+
+        self.grouped.create(
+            data=self.pipeline.extract_status_by_worker(),
+            category_col="worker_host",
+            fill_col="status_extract",
+            value_col="total",
+            title="Extracciones por worker",
+            filename="extract_status_worker.png"
+        )
+
+        self.grouped.create(
+            data=self.pipeline.solar_status_by_worker(),
+            category_col="worker_host",
+            fill_col="status_solar",
+            value_col="total",
+            title="Estado Solr por worker",
+            filename="solar_status_worker.png"
         )
 
         # =====================================
