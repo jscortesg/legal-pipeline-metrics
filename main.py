@@ -28,13 +28,13 @@ def main():
         queries
     )
 
-    dashboard = DashboardCharts(
-        inventory=inventory,
-        pipeline=pipeline,
-        infrastructure=infrastructure
+    print(
+        pipeline.extract_status_by_worker()
     )
 
-    dashboard.build_all()
+    print(
+        pipeline.solar_status_by_worker()
+    )
 
 
 if __name__ == "__main__":

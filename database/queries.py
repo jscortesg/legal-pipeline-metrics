@@ -255,3 +255,50 @@ class MetricsQueries:
                 query=query,
                 connection=conn
             )
+
+
+    def extract_status_by_worker(self) -> pl.DataFrame:
+
+        query = """
+        SELECT
+            worker_host,
+            status_extract,
+            COUNT(*) AS total
+        FROM extraccion_corpus
+        GROUP BY
+            worker_host,
+            status_extract
+        ORDER BY
+            worker_host,
+            status_extract
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
+
+    def solar_status_by_worker(self) -> pl.DataFrame:
+
+        query = """
+        SELECT
+            worker_host,
+            status_solar,
+            COUNT(*) AS total
+        FROM extraccion_corpus
+        GROUP BY
+            worker_host,
+            status_solar
+        ORDER BY
+            worker_host,
+            status_solar
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
