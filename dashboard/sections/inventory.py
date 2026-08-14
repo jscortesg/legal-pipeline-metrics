@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 
 
 def render(inventory):
@@ -7,31 +8,67 @@ def render(inventory):
         "Anexos por tipo de archivo"
     )
 
-    st.bar_chart(
+    tipo_df = (
         inventory
         .anexos_por_tipo_archivo()
         .to_pandas()
-        .set_index("tipo_archivo")
+    )
+
+    fig = px.bar(
+        tipo_df,
+        x="tipo_archivo",
+        y="total",
+        color="tipo_archivo",
+        title="Anexos por tipo de archivo"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader(
         "Documentos por reparto"
     )
 
-    st.bar_chart(
+    reparto_df = (
         inventory
         .documentos_por_reparto()
         .to_pandas()
-        .set_index("reparto")
+    )
+
+    fig = px.bar(
+        reparto_df,
+        x="reparto",
+        y="total",
+        color="reparto",
+        title="Documentos por reparto"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader(
         "Documentos por magistrado"
     )
 
-    st.bar_chart(
+    mag_df = (
         inventory
         .documentos_por_magistrado()
         .to_pandas()
-        .set_index("magistrado_fiscal")
+    )
+
+    fig = px.bar(
+        mag_df,
+        x="magistrado_fiscal",
+        y="total",
+        color="magistrado_fiscal",
+        title="Documentos por magistrado"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )

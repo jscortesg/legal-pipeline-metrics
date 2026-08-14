@@ -5,31 +5,93 @@ import plotly.express as px
 
 def render(pipeline):
 
-    st.subheader("Estado de extracción")
+    st.subheader(
+    "Estado de extracción"
+    )
 
-    st.bar_chart(
+    extract_df = (
         pipeline
         .status_extract_distribution()
         .to_pandas()
-        .set_index("status_extract")
+    )
+
+    fig = px.bar(
+        extract_df,
+        x="status_extract",
+        y="total",
+        color="status_extract",
+        title="Estado de extracción",
+        color_discrete_map={
+            "SUCCESS": "#539a6c",
+            "FAILED": "#b54747",
+            "PENDING": "#d98c2b"
+        }
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader("Estado Solar")
 
-    st.bar_chart(
+    solar_df = (
         pipeline
         .status_solar_distribution()
         .to_pandas()
-        .set_index("status_solar")
+    )
+
+    fig = px.bar(
+        solar_df,
+        x="status_solar",
+        y="total",
+        color="status_solar",
+        title="Estado Solar",
+        color_discrete_sequence=[
+            "#539a6c",
+            "#b54747",
+            "#d98c2b"
+        ]
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader("Distribución de vectores")
 
-    st.bar_chart(
+    vector_df = (
         pipeline
         .vector_distribution()
         .to_pandas()
-        .set_index("has_vector")
+    )
+
+    vector_df["label"] = (
+        vector_df["has_vector"]
+        .map(
+            {
+                True: "Con vector",
+                False: "Sin vector"
+            }
+        )
+    )
+
+    fig = px.bar(
+        vector_df,
+        x="label",
+        y="total",
+        color="label",
+        title="Distribución de vectores",
+        color_discrete_map={
+            "Con vector": "#5b4bb7",
+            "Sin vector": "#9b8cf0"
+        }
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader("Tendencia de procesamiento")
@@ -68,19 +130,30 @@ def render(pipeline):
         "Extracción por worker"
     )
 
-    worker_df = (
+    extract_worker_df = (
         pipeline
         .extract_status_by_worker()
         .to_pandas()
     )
 
     fig = px.bar(
-        worker_df,
-        x="worker_host",
-        y="total",
+        extract_worker_df,
+        y="worker_host",
+        x="total",
         color="status_extract",
+        orientation="h",
         barmode="stack",
-        title="Extracciones por worker"
+        title="Extracciones por worker",
+        color_discrete_map={
+            "SUCCESS": "#539a6c",
+            "FAILED": "#b54747",
+            "PENDING": "#d98c2b"
+        }
+    )
+
+    fig.update_layout(
+        yaxis_title="Worker",
+        xaxis_title="Documentos"
     )
 
     st.plotly_chart(
@@ -92,19 +165,30 @@ def render(pipeline):
         "Estado Solar por worker"
     )
 
-    solar_df = (
+    solar_worker_df = (
         pipeline
         .solar_status_by_worker()
         .to_pandas()
     )
 
     fig = px.bar(
-        solar_df,
-        x="worker_host",
-        y="total",
+        solar_worker_df,
+        y="worker_host",
+        x="total",
         color="status_solar",
+        orientation="h",
         barmode="stack",
-        title="Estado Solar por worker"
+        title="Estado Solar por worker",
+        color_discrete_map={
+            "SUCCESS": "#539a6c",
+            "FAILED": "#b54747",
+            "PENDING": "#d98c2b"
+        }
+    )
+
+    fig.update_layout(
+        yaxis_title="Worker",
+        xaxis_title="Documentos"
     )
 
     st.plotly_chart(

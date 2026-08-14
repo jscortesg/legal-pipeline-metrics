@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 
 
 def render(infra):
@@ -7,42 +8,91 @@ def render(infra):
         "Volumen por worker"
     )
 
-    st.bar_chart(
+    volume_df = (
         infra
         .worker_volume()
         .to_pandas()
-        .set_index("worker_host")
+    )
+
+    fig = px.bar(
+        volume_df,
+        x="worker_host",
+        y="total",
+        color="worker_host",
+        title="Volumen por worker"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader(
         "CPU promedio"
     )
 
-    st.bar_chart(
+    cpu_df = (
         infra
         .worker_cpu()
         .to_pandas()
-        .set_index("worker_host")
+    )
+
+    fig = px.bar(
+        cpu_df,
+        x="worker_host",
+        y="avg_cpu_percent",
+        color="worker_host",
+        title="CPU promedio"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader(
         "Memoria promedio"
     )
 
-    st.bar_chart(
+    memory_df = (
         infra
         .worker_memory()
         .to_pandas()
-        .set_index("worker_host")
+    )
+
+    fig = px.bar(
+        memory_df,
+        x="worker_host",
+        y="avg_mem_mb",
+        color="worker_host",
+        title="Memoria promedio"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
     )
 
     st.subheader(
         "Duración promedio"
     )
 
-    st.bar_chart(
+    duration_df = (
         infra
         .worker_duration()
         .to_pandas()
-        .set_index("worker_host")
     )
+
+    fig = px.bar(
+        duration_df,
+        x="worker_host",
+        y="avg_duration_seconds",
+        color="worker_host",
+        title="Duración promedio"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
