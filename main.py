@@ -1,38 +1,33 @@
 from database.connection import DatabaseConnection
 from database.queries import DatasetQueries
 
+from stats.pipeline import PipelineMetrics
+
 
 def main():
 
     db = DatabaseConnection()
 
-    queries = DatasetQueries(db)
+    loader = DatasetQueries(db)
 
-    dfs = queries.load_all()
+    dfs = loader.load_all()
 
-    print("\nTablas cargadas:")
-    print("-" * 50)
-
-    for table_name, df in dfs.items():
-
-        print(
-            f"{table_name}: "
-            f"{df.height} filas x "
-            f"{df.width} columnas"
-        )
-
-    print("\nColumnas de EXTRACCION_CORPUS:")
-    print("-" * 50)
+    pipeline = PipelineMetrics(dfs)
 
     print(
-        dfs["extraccion_corpus"].columns
+        pipeline.status_extract_distribution()
     )
 
-    print("\nPrimeras filas:")
-    print("-" * 50)
+    print(pipeline.status_solar_distribution())
+    print()
+    print(pipeline.vector_distribution())
+    print()
+    print(pipeline.extract_status_by_worker())
+    print()
+    print(pipeline.solar_status_by_worker())
 
     print(
-        dfs["extraccion_corpus"].head()
+        pipeline.processing_trend()
     )
 
 
