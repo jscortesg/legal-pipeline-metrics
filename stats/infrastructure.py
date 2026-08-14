@@ -20,3 +20,15 @@ class InfrastructureMetrics(MetricsDataset):
     def worker_memory(self):
 
         return self.queries.worker_memory()
+
+    def duration_distribution(self):
+
+        return self.queries.duration_distribution()
+
+    def cpu_distribution(self):
+
+        return self.queries.cpu_distribution()
+
+    def memory_distribution(self):
+
+        return self.queries.memory_distribution()

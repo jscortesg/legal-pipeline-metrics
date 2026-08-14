@@ -3,6 +3,7 @@
 from visualize.bar import BarPlot
 from visualize.grouped_bar import GroupedBarPlot
 from visualize.timeline import TimelineChart
+from visualize.histogram import HistogramChart
 
 
 class DashboardCharts:
@@ -21,7 +22,7 @@ class DashboardCharts:
         self.bar = BarPlot()
         self.grouped = GroupedBarPlot()
         self.timeline = TimelineChart()
-
+        self.histogram = HistogramChart()
     def build_all(self):
 
         print(
@@ -148,6 +149,33 @@ class DashboardCharts:
             rolling_col="rolling_7d",
             title="Extracciones por día",
             filename="processing_trend.png"
+        )
+
+        # =====================================
+        # HISTOGRAMAS
+        # =====================================
+        self.histogram.create(
+            data=self.infrastructure.duration_distribution(),
+            column="docling_duration_seconds",
+            title="Distribución de duración de procesamiento",
+            xlabel="Segundos",
+            filename="duration_histogram.png"
+        )
+
+        self.histogram.create(
+            data=self.infrastructure.cpu_distribution(),
+            column="worker_cpu_percent",
+            title="Distribución uso CPU",
+            xlabel="CPU (%)",
+            filename="cpu_histogram.png"
+        )
+
+        self.histogram.create(
+            data=self.infrastructure.memory_distribution(),
+            column="worker_mem_mb",
+            title="Distribución uso memoria",
+            xlabel="Memoria (MB)",
+            filename="memory_histogram.png"
         )
 
         print(

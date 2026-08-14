@@ -322,4 +322,52 @@ class MetricsQueries:
                 connection=conn
             )
 
+    def duration_distribution(self):
+
+        query = """
+        SELECT
+            docling_duration_seconds
+        FROM extraccion_corpus
+        WHERE status_extract <> 'PENDING'
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
+
+    def cpu_distribution(self):
+
+        query = """
+        SELECT
+            worker_cpu_percent
+        FROM extraccion_corpus
+        WHERE status_extract <> 'PENDING'
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
+
+    def memory_distribution(self):
+
+        query = """
+        SELECT
+            worker_mem_mb
+        FROM extraccion_corpus
+        WHERE status_extract <> 'PENDING'
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
+
     
