@@ -1,16 +1,44 @@
 services:
 
+  postgres:
+
+    image: postgres:17
+
+    container_name: legal-postgres
+
+    environment:
+      POSTGRES_DB: legal_pipeline_prod
+      POSTGRES_USER: legal_user
+      POSTGRES_PASSWORD: legal_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./provision/backup.sql:/docker-entrypoint-initdb.d/backup.sql
+
+    restart: unless-stopped
+
+
   dashboard:
 
     build: .
 
-    ports:
-      - "8501:8501"
+    depends_on:
+      - postgres
 
     env_file:
       - .env
+
+    ports:
+      - "8501:8501"
 
     volumes:
       - ./output:/app/output
 
     restart: unless-stopped
+
+
+volumes:
+  postgres_data:

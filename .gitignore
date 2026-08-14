@@ -98,3 +98,7 @@ temp/
 build/
 dist/
 *.egg-info/
+
+
+# Dumps de PostgreSQL
+provision/*.sql
