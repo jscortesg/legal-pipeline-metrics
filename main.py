@@ -1,50 +1,39 @@
 from database.connection import DatabaseConnection
-from database.queries import MetricsQueries
-
-from stats.inventory import InventoryMetrics
-from stats.infrastructure import InfrastructureMetrics
-
-from stats.pipeline import PipelineMetrics
-from visualize.dashboard import DashboardCharts
+from database.queries import DatasetQueries
 
 
 def main():
 
     db = DatabaseConnection()
 
-    queries = MetricsQueries(db)
+    queries = DatasetQueries(db)
 
-    inventory = InventoryMetrics(
-    queries
-    )
+    dfs = queries.load_all()
 
-    pipeline = PipelineMetrics(
-        queries
-    )
+    print("\nTablas cargadas:")
+    print("-" * 50)
 
-    infrastructure = InfrastructureMetrics(
-        queries
-    )
+    for table_name, df in dfs.items():
 
-    df = pipeline.processing_trend()
+        print(
+            f"{table_name}: "
+            f"{df.height} filas x "
+            f"{df.width} columnas"
+        )
 
-    print(df)
+    print("\nColumnas de EXTRACCION_CORPUS:")
+    print("-" * 50)
 
     print(
-        "\nFilas:",
-        len(df)
+        dfs["extraccion_corpus"].columns
     )
 
-    print(df.head(10))
-    print(df.tail(10))
+    print("\nPrimeras filas:")
+    print("-" * 50)
 
-    dashboard = DashboardCharts(
-        inventory=inventory,
-        pipeline=pipeline,
-        infrastructure=infrastructure
+    print(
+        dfs["extraccion_corpus"].head()
     )
-
-    dashboard.build_all()
 
 
 if __name__ == "__main__":
