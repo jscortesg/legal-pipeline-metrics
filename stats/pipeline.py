@@ -44,6 +44,54 @@ class PipelineMetrics(MetricsDataset):
             )
         )
 
+    def _trend(
+        self,
+        filter_expr: pl.Expr | None = None
+    ) -> pl.DataFrame:
+
+        df = self.extraccion
+
+        if filter_expr is not None:
+            df = df.filter(filter_expr)
+
+        return (
+            df
+            .filter(
+                pl.col("date_process").is_not_null()
+            )
+            .filter(
+                pl.col("date_process")
+                .str.slice(0, 4)
+                .cast(
+                    pl.Int32,
+                    strict=False
+                )
+                < 2100
+            )
+            .with_columns(
+                pl.col("date_process")
+                .str.slice(0, 10)
+                .str.strptime(
+                    pl.Date,
+                    "%Y-%m-%d",
+                    strict=False
+                )
+                .alias("process_date")
+            )
+            .group_by("process_date")
+            .len()
+            .rename({"len": "total"})
+            .sort("process_date")
+            .with_columns(
+                pl.col("total")
+                .rolling_mean(
+                    window_size=7,
+                    min_samples=1
+                )
+                .alias("rolling_7d")
+            )
+        )
+
     def status_extract_distribution(
         self
     ) -> pl.DataFrame:
@@ -88,40 +136,31 @@ class PipelineMetrics(MetricsDataset):
         self
     ) -> pl.DataFrame:
 
-        return (
-            self.extraccion
-            .filter(
-                pl.col("date_process").is_not_null()
-            )
-            .filter(
-                pl.col("date_process")
-                .str.slice(0, 4)
-                .cast(
-                    pl.Int32,
-                    strict=False
-                )
-                < 2100
-            )
-            .with_columns(
-                pl.col("date_process")
-                .str.slice(0, 10)
-                .str.strptime(
-                    pl.Date,
-                    "%Y-%m-%d",
-                    strict=False
-                )
-                .alias("process_date")
-            )
-            .group_by("process_date")
-            .len()
-            .rename({"len": "total"})
-            .sort("process_date")
-            .with_columns(
-                pl.col("total")
-                .rolling_mean(
-                    window_size=7,
-                    min_samples=1
-                )
-                .alias("rolling_7d")
-            )
+        return self._trend()
+
+
+    def extract_success_trend(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend(
+            pl.col("status_extract") == "SUCCESS"
+        )
+
+
+    def extract_failed_trend(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend(
+            pl.col("status_extract") == "FAILED"
+        )
+
+
+    def vectorized_trend(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend(
+            pl.col("has_vector")
         )

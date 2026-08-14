@@ -5,6 +5,8 @@ from stats.pipeline import PipelineMetrics
 from stats.inventory import InventoryMetrics
 from stats.infrastructure import InfrastructureMetrics
 
+from visualize.dashboard import DashboardCharts
+
 
 def main():
 
@@ -77,6 +79,14 @@ def main():
     print(
         infrastructure.memory_distribution().head()
     )
+
+    dashboard = DashboardCharts(
+        inventory=inventory,
+        pipeline=pipeline,
+        infrastructure=infrastructure
+    )
+
+    dashboard.build_all()
 
 
 if __name__ == "__main__":

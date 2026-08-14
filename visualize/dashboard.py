@@ -151,6 +151,33 @@ class DashboardCharts:
             filename="processing_trend.png"
         )
 
+        self.timeline.create(
+            data=self.pipeline.extract_success_trend(),
+            date_col="process_date",
+            value_col="total",
+            rolling_col="rolling_7d",
+            title="Extracciones exitosas por día",
+            filename="extract_success_trend.png"
+        )
+
+        self.timeline.create(
+            data=self.pipeline.extract_failed_trend(),
+            date_col="process_date",
+            value_col="total",
+            rolling_col="rolling_7d",
+            title="Fallos de extracción por día",
+            filename="extract_failed_trend.png"
+        )
+
+        self.timeline.create(
+            data=self.pipeline.vectorized_trend(),
+            date_col="process_date",
+            value_col="total",
+            rolling_col="rolling_7d",
+            title="Documentos vectorizados por día",
+            filename="vectorized_trend.png"
+        )
+
         # =====================================
         # HISTOGRAMAS
         # =====================================
