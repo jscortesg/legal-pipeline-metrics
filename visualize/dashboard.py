@@ -4,6 +4,9 @@ from visualize.bar import BarPlot
 from visualize.grouped_bar import GroupedBarPlot
 from visualize.timeline import TimelineChart
 from visualize.histogram import HistogramChart
+from visualize.worker_timeline import (
+    WorkerTimelineChart
+)
 
 
 class DashboardCharts:
@@ -18,6 +21,7 @@ class DashboardCharts:
         self.inventory = inventory
         self.pipeline = pipeline
         self.infrastructure = infrastructure
+        self.worker_timeline = WorkerTimelineChart()
 
         self.bar = BarPlot()
         self.grouped = GroupedBarPlot()
@@ -203,6 +207,28 @@ class DashboardCharts:
             title="Distribución uso memoria",
             xlabel="Memoria (MB)",
             filename="memory_histogram.png"
+        )
+
+        # =====================================
+        # TIMELINES POR WORKER
+        # =====================================
+
+        self.worker_timeline.create(
+            data=self.pipeline.processing_trend_by_worker(),
+            title="Procesamiento por worker",
+            filename="processing_trend_by_worker.png"
+        )
+
+        self.worker_timeline.create(
+            data=self.pipeline.success_trend_by_worker(),
+            title="Extracciones exitosas por worker",
+            filename="success_trend_by_worker.png"
+        )
+
+        self.worker_timeline.create(
+            data=self.pipeline.failed_trend_by_worker(),
+            title="Extracciones fallidas por worker",
+            filename="failed_trend_by_worker.png"
         )
 
         print(

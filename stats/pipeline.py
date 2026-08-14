@@ -92,6 +92,58 @@ class PipelineMetrics(MetricsDataset):
             )
         )
 
+    def _trend_by_worker(
+        self,
+        status_filter: str | None = None
+    ) -> pl.DataFrame:
+
+        df = self.extraccion
+
+        if status_filter is not None:
+            df = df.filter(
+                pl.col("status_extract") == status_filter
+            )
+
+        return (
+            df
+            .filter(
+                pl.col("date_process").is_not_null()
+            )
+            .with_columns(
+                pl.col("date_process")
+                .str.slice(0, 10)
+                .str.strptime(
+                    pl.Date,
+                    "%Y-%m-%d",
+                    strict=False
+                )
+                .alias("process_date")
+            )
+            .group_by(
+                [
+                    "worker_host",
+                    "process_date"
+                ]
+            )
+            .len()
+            .rename({"len": "total"})
+            .sort(
+                [
+                    "worker_host",
+                    "process_date"
+                ]
+            )
+            .with_columns(
+                pl.col("total")
+                .rolling_mean(
+                    window_size=7,
+                    min_samples=1
+                )
+                .over("worker_host")
+                .alias("rolling_7d")
+            )
+        )
+
     def status_extract_distribution(
         self
     ) -> pl.DataFrame:
@@ -163,4 +215,28 @@ class PipelineMetrics(MetricsDataset):
 
         return self._trend(
             pl.col("has_vector")
+        )
+
+    def processing_trend_by_worker(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend_by_worker()
+
+
+    def success_trend_by_worker(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend_by_worker(
+            "SUCCESS"
+        )
+
+
+    def failed_trend_by_worker(
+        self
+    ) -> pl.DataFrame:
+
+        return self._trend_by_worker(
+            "FAILED"
         )

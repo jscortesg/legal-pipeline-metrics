@@ -80,6 +80,10 @@ def main():
         infrastructure.memory_distribution().head()
     )
 
+    print(
+        pipeline.processing_trend_by_worker()
+    )
+
     dashboard = DashboardCharts(
         inventory=inventory,
         pipeline=pipeline,
