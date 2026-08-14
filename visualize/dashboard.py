@@ -2,6 +2,7 @@
 
 from visualize.bar import BarPlot
 from visualize.grouped_bar import GroupedBarPlot
+from visualize.timeline import TimelineChart
 
 
 class DashboardCharts:
@@ -19,6 +20,7 @@ class DashboardCharts:
 
         self.bar = BarPlot()
         self.grouped = GroupedBarPlot()
+        self.timeline = TimelineChart()
 
     def build_all(self):
 
@@ -134,6 +136,18 @@ class DashboardCharts:
             value_col="avg_mem_mb",
             title="Memoria promedio por worker",
             filename="worker_memory.png"
+        )
+
+        # =====================================
+        # TIMELINE
+        # =====================================
+        self.timeline.create(
+            data=self.pipeline.processing_trend(),
+            date_col="process_date",
+            value_col="total",
+            rolling_col="rolling_7d",
+            title="Extracciones por día",
+            filename="processing_trend.png"
         )
 
         print(

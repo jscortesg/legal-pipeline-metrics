@@ -1,12 +1,10 @@
-# main.py
-
 from database.connection import DatabaseConnection
 from database.queries import MetricsQueries
 
 from stats.inventory import InventoryMetrics
-from stats.pipeline import PipelineMetrics
 from stats.infrastructure import InfrastructureMetrics
 
+from stats.pipeline import PipelineMetrics
 from visualize.dashboard import DashboardCharts
 
 
@@ -17,7 +15,7 @@ def main():
     queries = MetricsQueries(db)
 
     inventory = InventoryMetrics(
-        queries
+    queries
     )
 
     pipeline = PipelineMetrics(
@@ -27,6 +25,18 @@ def main():
     infrastructure = InfrastructureMetrics(
         queries
     )
+
+    df = pipeline.processing_trend()
+
+    print(df)
+
+    print(
+        "\nFilas:",
+        len(df)
+    )
+
+    print(df.head(10))
+    print(df.tail(10))
 
     dashboard = DashboardCharts(
         inventory=inventory,

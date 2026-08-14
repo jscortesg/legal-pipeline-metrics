@@ -302,3 +302,24 @@ class MetricsQueries:
                 query=query,
                 connection=conn
             )
+
+    def processing_trend(self):
+
+        query = """
+        SELECT
+            DATE(date_process) AS process_date,
+            COUNT(*) AS total
+        FROM extraccion_corpus
+        WHERE EXTRACT(YEAR FROM date_process) < 2100
+        GROUP BY DATE(date_process)
+        ORDER BY process_date
+        """
+
+        with self.connection.connect() as conn:
+
+            return pl.read_database(
+                query=query,
+                connection=conn
+            )
+
+    
