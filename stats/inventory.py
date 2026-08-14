@@ -1,5 +1,7 @@
 # stats/inventory.py
 
+import polars as pl
+
 from stats.base import MetricsDataset
 
 
@@ -9,32 +11,58 @@ class InventoryMetrics(MetricsDataset):
 
         return {
             "expedientes":
-                self.queries.total_expedientes(),
+                self.expediente.height,
 
             "cuadernos":
-                self.queries.total_cuadernos(),
+                self.cuaderno.height,
 
             "documentos":
-                self.queries.total_documentos(),
+                self.documento.height,
 
             "anexos":
-                self.queries.total_anexos(),
+                self.anexo.height,
 
             "inventarios":
-                self.queries.total_inventarios(),
+                self.inventario.height,
 
             "extracciones":
-                self.queries.total_extracciones()
+                self.extraccion.height
         }
+
+    def _distribution(
+        self,
+        df: pl.DataFrame,
+        column: str
+    ) -> pl.DataFrame:
+
+        return (
+            df
+            .group_by(column)
+            .len()
+            .rename({"len": "total"})
+            .sort(
+                "total",
+                descending=True
+            )
+        )
 
     def anexos_por_tipo_archivo(self):
 
-        return self.queries.anexos_por_tipo_archivo()
+        return self._distribution(
+            self.anexo,
+            "tipo_archivo"
+        )
 
     def documentos_por_reparto(self):
 
-        return self.queries.documentos_por_reparto()
+        return self._distribution(
+            self.documento,
+            "reparto"
+        )
 
     def documentos_por_magistrado(self):
 
-        return self.queries.documentos_por_magistrado()
+        return self._distribution(
+            self.documento,
+            "magistrado_fiscal"
+        )
