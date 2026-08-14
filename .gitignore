@@ -98,3 +98,10 @@ temp/
 build/
 dist/
 *.egg-info/
+
+# =====================================================
+# BACKUPS POSTGRES
+# =====================================================
+
+provision/backup.sql
+postgres/backup.sql
