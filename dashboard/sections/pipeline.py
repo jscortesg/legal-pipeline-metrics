@@ -127,6 +127,38 @@ def render(pipeline):
     )
 
     st.subheader(
+        "Procesamiento por worker"
+    )
+
+    worker_df = (
+        pipeline
+        .processing_trend_by_worker()
+        .to_pandas()
+    )
+
+    fig = px.line(
+        worker_df,
+        x="process_date",
+        y="rolling_7d",
+        color="worker_host",
+        markers=True,
+        title="Procesamiento por worker (media móvil 7 días)"
+    )
+
+    fig.update_traces(
+        line=dict(width=3)
+    )
+
+    fig.update_layout(
+        hovermode="x unified"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.subheader(
         "Extracción por worker"
     )
 
@@ -288,6 +320,62 @@ def render(pipeline):
 
     fig.data[0].line.color = "#5b4bb7"
     fig.data[1].line.color = "#8d7df0"
+
+    fig.update_layout(
+        hovermode="x unified"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.subheader(
+    "Extracciones exitosas por worker"
+    )
+
+    success_worker_df = (
+        pipeline
+        .success_trend_by_worker()
+        .to_pandas()
+    )
+
+    fig = px.line(
+        success_worker_df,
+        x="process_date",
+        y="rolling_7d",
+        color="worker_host",
+        markers=True,
+        title="Promedio móvil (7 días) de extracciones exitosas"
+    )
+
+    fig.update_layout(
+        hovermode="x unified"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.subheader(
+        "Extracciones fallidas por worker"
+    )
+
+    failed_worker_df = (
+        pipeline
+        .failed_trend_by_worker()
+        .to_pandas()
+    )
+
+    fig = px.line(
+        failed_worker_df,
+        x="process_date",
+        y="rolling_7d",
+        color="worker_host",
+        markers=True,
+        title="Promedio móvil (7 días) de extracciones fallidas"
+    )
 
     fig.update_layout(
         hovermode="x unified"
