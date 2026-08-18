@@ -2,12 +2,29 @@
 
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 
 def render(pipeline):
 
-    st.subheader(
-    "Estado de extracción"
-    )
+    def filtrar_rango_fechas(
+        df,
+        inicio,
+        fin,
+        fecha_col="process_date"
+    ):
+        if fecha_col not in df.columns:
+            return df
+
+        if inicio is None or fin is None:
+            return df
+
+        inicio = pd.Timestamp(inicio)
+        fin = pd.Timestamp(fin)
+
+        return df[
+            (df[fecha_col] >= inicio)
+            & (df[fecha_col] <= fin)
+        ]
 
     extract_df = (
         pipeline
@@ -94,13 +111,39 @@ def render(pipeline):
         use_container_width=True
     )
 
-    st.subheader("Tendencia de procesamiento")
+    st.subheader("Filtro temporal")
 
     trend_df = (
         pipeline
         .processing_trend()
         .to_pandas()
     )
+
+    fecha_min = trend_df["process_date"].min()
+    fecha_max = trend_df["process_date"].max()
+
+    rango_fechas = st.date_input(
+        "Seleccione rango de fechas",
+        value=(fecha_min, fecha_max)
+    )
+
+    if (
+        rango_fechas is None
+        or len(rango_fechas) != 2
+    ):
+        st.warning(
+            "Seleccione una fecha inicial y una fecha final."
+        )
+        st.stop()
+
+    inicio, fin = rango_fechas
+
+    trend_df = filtrar_rango_fechas(
+            trend_df,
+            inicio,
+            fin
+        )
+    
 
     fig = px.line(
         trend_df,
@@ -134,6 +177,12 @@ def render(pipeline):
         pipeline
         .processing_trend_by_worker()
         .to_pandas()
+    )
+
+    worker_df = filtrar_rango_fechas(
+        worker_df,
+        inicio,
+        fin
     )
 
     fig = px.line(
@@ -238,6 +287,12 @@ def render(pipeline):
         .to_pandas()
     )
 
+    success_df = filtrar_rango_fechas(
+        success_df,
+        inicio,
+        fin
+    )
+
     fig = px.line(
         success_df,
         x="process_date",
@@ -270,6 +325,12 @@ def render(pipeline):
         pipeline
         .extract_failed_trend()
         .to_pandas()
+    )
+
+    failed_df = filtrar_rango_fechas(
+        failed_df,
+        inicio,
+        fin
     )
 
     fig = px.line(
@@ -306,6 +367,12 @@ def render(pipeline):
         .to_pandas()
     )
 
+    vectorized_df = filtrar_rango_fechas(
+        vectorized_df,
+        inicio,
+        fin
+    )
+
     fig = px.line(
         vectorized_df,
         x="process_date",
@@ -340,6 +407,12 @@ def render(pipeline):
         .to_pandas()
     )
 
+    success_worker_df = filtrar_rango_fechas(
+        success_worker_df,
+        inicio,
+        fin
+    )
+
     fig = px.line(
         success_worker_df,
         x="process_date",
@@ -366,6 +439,12 @@ def render(pipeline):
         pipeline
         .failed_trend_by_worker()
         .to_pandas()
+    )
+
+    failed_worker_df = filtrar_rango_fechas(
+        failed_worker_df,
+        inicio,
+        fin
     )
 
     fig = px.line(
