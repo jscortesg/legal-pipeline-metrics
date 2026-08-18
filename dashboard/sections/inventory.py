@@ -4,13 +4,36 @@ import plotly.express as px
 
 def render(inventory):
 
+    mag_df = (
+    inventory
+    .documentos_por_magistrado()
+    .to_pandas()
+    )
+
+    magistrados = ["Todos"] + sorted(
+        mag_df["magistrado_fiscal"].tolist()
+    )
+
+    magistrado = st.selectbox(
+        "Filtrar por magistrado",
+        magistrados
+    )
+
+    magistrado_filtro = (
+        None
+        if magistrado == "Todos"
+        else magistrado
+    )
+
     st.subheader(
         "Anexos por tipo de archivo"
     )
 
     tipo_df = (
         inventory
-        .anexos_por_tipo_archivo()
+        .anexos_por_tipo_archivo(
+            magistrado_filtro
+        )
         .to_pandas()
     )
 
@@ -33,7 +56,9 @@ def render(inventory):
 
     reparto_df = (
         inventory
-        .documentos_por_reparto()
+        .documentos_por_reparto(
+            magistrado_filtro
+        )
         .to_pandas()
     )
 
@@ -50,25 +75,27 @@ def render(inventory):
         use_container_width=True
     )
 
-    st.subheader(
-        "Documentos por magistrado"
-    )
+    if magistrado_filtro is None:
 
-    mag_df = (
-        inventory
-        .documentos_por_magistrado()
-        .to_pandas()
-    )
+        st.subheader(
+                "Documentos por magistrado"
+        )
 
-    fig = px.bar(
-        mag_df,
-        x="magistrado_fiscal",
-        y="total",
-        color="magistrado_fiscal",
-        title="Documentos por magistrado"
-    )
+        mag_df = (
+            inventory
+            .documentos_por_magistrado()
+            .to_pandas()
+        )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+        fig = px.bar(
+            mag_df,
+            x="magistrado_fiscal",
+            y="total",
+            color="magistrado_fiscal",
+            title="Documentos por magistrado"
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )

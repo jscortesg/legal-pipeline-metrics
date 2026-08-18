@@ -7,27 +7,17 @@ from stats.base import MetricsDataset
 
 class InventoryMetrics(MetricsDataset):
 
-    def summary(self):
+    def _filtrar_documentos(
+        self,
+        magistrado: str | None = None
+    ) -> pl.DataFrame:
 
-        return {
-            "expedientes":
-                self.expediente.height,
+        if magistrado is None:
+            return self.documento
 
-            "cuadernos":
-                self.cuaderno.height,
-
-            "documentos":
-                self.documento.height,
-
-            "anexos":
-                self.anexo.height,
-
-            "inventarios":
-                self.inventario.height,
-
-            "extracciones":
-                self.extraccion.height
-        }
+        return self.documento.filter(
+            pl.col("magistrado_fiscal") == magistrado
+        )
 
     def _distribution(
         self,
@@ -46,23 +36,75 @@ class InventoryMetrics(MetricsDataset):
             )
         )
 
-    def anexos_por_tipo_archivo(self):
+    def summary(self):
+    
+            return {
+                "expedientes":
+                    self.expediente.height,
+    
+                "cuadernos":
+                    self.cuaderno.height,
+    
+                "documentos":
+                    self.documento.height,
+    
+                "anexos":
+                    self.anexo.height,
+    
+                "inventarios":
+                    self.inventario.height,
+    
+                "extracciones":
+                    self.extraccion.height
+            }
+
+    def anexos_por_tipo_archivo(
+        self,
+        magistrado_fiscal: str | None = None
+    ):
+
+        df = self.anexo
+
+        if magistrado_fiscal is not None:
+
+            df = (
+                df.join(
+                    self.documento.select(
+                        [
+                            "doc_id",
+                            "magistrado_fiscal"
+                        ]
+                    ),
+                    on="doc_id",
+                    how="left"
+                )
+                .filter(
+                    pl.col("magistrado_fiscal")
+                    == magistrado_fiscal
+                )
+            )
 
         return self._distribution(
-            self.anexo,
+            df,
             "tipo_archivo"
         )
 
-    def documentos_por_reparto(self):
+    def documentos_por_reparto(
+        self,
+        magistrado=None
+    ):
 
         return self._distribution(
-            self.documento,
+            self._filtrar_documentos(magistrado),
             "reparto"
         )
 
-    def documentos_por_magistrado(self):
+    def documentos_por_magistrado(
+        self,
+        magistrado=None
+    ):
 
         return self._distribution(
-            self.documento,
+            self._filtrar_documentos(magistrado),
             "magistrado_fiscal"
         )
