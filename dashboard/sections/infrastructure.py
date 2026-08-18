@@ -4,95 +4,100 @@ import plotly.express as px
 
 def render(infra):
 
-    st.subheader(
-        "Volumen por worker"
-    )
+    col1, col2 = st.columns(2)
 
-    volume_df = (
-        infra
-        .worker_volume()
-        .to_pandas()
-    )
+    with col1:
 
-    fig = px.bar(
-        volume_df,
-        x="worker_host",
-        y="total",
-        color="worker_host",
-        title="Volumen por worker"
-    )
+        st.subheader(
+            "Volumen por worker"
+        )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+        volume_df = (
+            infra
+            .worker_volume()
+            .to_pandas()
+        )
 
-    st.subheader(
-        "CPU promedio"
-    )
+        fig = px.bar(
+            volume_df,
+            x="worker_host",
+            y="total",
+            color="worker_host",
+            title="Volumen por worker"
+        )
 
-    cpu_df = (
-        infra
-        .worker_cpu()
-        .to_pandas()
-    )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
-    fig = px.bar(
-        cpu_df,
-        x="worker_host",
-        y="avg_cpu_percent",
-        color="worker_host",
-        title="CPU promedio"
-    )
+        st.subheader(
+            "Memoria promedio"
+        )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+        memory_df = (
+            infra
+            .worker_memory()
+            .to_pandas()
+        )
 
-    st.subheader(
-        "Memoria promedio"
-    )
+        fig = px.bar(
+            memory_df,
+            x="worker_host",
+            y="avg_mem_mb",
+            color="worker_host",
+            title="Memoria promedio"
+        )
 
-    memory_df = (
-        infra
-        .worker_memory()
-        .to_pandas()
-    )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
-    fig = px.bar(
-        memory_df,
-        x="worker_host",
-        y="avg_mem_mb",
-        color="worker_host",
-        title="Memoria promedio"
-    )
+    with col2:
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+        st.subheader(
+            "CPU promedio"
+        )
 
-    st.subheader(
-        "Duración promedio"
-    )
+        cpu_df = (
+            infra
+            .worker_cpu()
+            .to_pandas()
+        )
 
-    duration_df = (
-        infra
-        .worker_duration()
-        .to_pandas()
-    )
+        fig = px.bar(
+            cpu_df,
+            x="worker_host",
+            y="avg_cpu_percent",
+            color="worker_host",
+            title="CPU promedio"
+        )
 
-    fig = px.bar(
-        duration_df,
-        x="worker_host",
-        y="avg_duration_seconds",
-        color="worker_host",
-        title="Duración promedio"
-    )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+        st.subheader(
+            "Duración promedio"
+        )
 
+        duration_df = (
+            infra
+            .worker_duration()
+            .to_pandas()
+        )
+
+        fig = px.bar(
+            duration_df,
+            x="worker_host",
+            y="avg_duration_seconds",
+            color="worker_host",
+            title="Duración promedio"
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
