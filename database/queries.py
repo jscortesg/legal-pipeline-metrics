@@ -86,8 +86,8 @@ class DatasetQueries:
                         SELECT
                             {", ".join(select_columns)}
                         FROM etl."{table_name}"
-                        WHERE "DATE_PROCESS" IS NOT NULL
-                        ORDER BY "DATE_PROCESS" DESC
+                        TABLESAMPLE BERNOULLI (0.2)
+                        ORDER BY random()
                         LIMIT {self.SAMPLE_SIZES[table_name]}
                     """
 
