@@ -1,15 +1,17 @@
 # visualize/bar.py
 
+import polars as pl
 from plotnine import (
     ggplot,
     aes,
     geom_col,
     geom_text,
-    theme_minimal,
+    geom_label,
     labs,
+    theme_minimal,
     theme,
     element_text,
-    scale_fill_manual
+    scale_y_continuous
 )
 
 from visualize.base import BasePlot
@@ -26,18 +28,64 @@ class BarPlot(BasePlot):
         filename: str
     ):
 
+        total = (
+            data
+            .select(
+                pl.col(value_col).sum()
+            )
+            .item()
+        )
+
+        missing_total = (
+            data
+            .filter(
+                pl.col(category_col).is_null()
+            )
+            .select(
+                pl.col(value_col).sum()
+            )
+            .item()
+        )
+
+        missing_percentage = (
+            missing_total * 100 / total
+            if total
+            else 0
+        )
+
+        plot_data = (
+            data
+            .filter(
+                pl.col(category_col).is_not_null()
+            )
+        )
+
+        max_value = (
+            plot_data
+            .select(
+                pl.col(value_col).max()
+            )
+            .item()
+        )
+
+        category_count = plot_data.height
+
+        plot_data = plot_data.to_pandas()
+
         plot = (
             ggplot(
-                data.to_pandas()
-            )
-            + aes(
-                x=category_col,
-                y=value_col,
-                fill=category_col
+                plot_data,
+                aes(
+                    x=category_col,
+                    y=value_col,
+                    fill=category_col
+                )
             )
             + geom_col()
             + geom_text(
-                aes(label=value_col),
+                aes(
+                    label=value_col
+                ),
                 va="bottom"
             )
             + labs(
@@ -45,15 +93,11 @@ class BarPlot(BasePlot):
                 x="",
                 y="Cantidad"
             )
-            + scale_fill_manual(
-                values=[
-                    "#4E79A7",
-                    "#F28E2B",
-                    "#59A14F",
-                    "#E15759",
-                    "#76B7B2",
-                    "#EDC948"
-                ]
+            + scale_y_continuous(
+                limits=(
+                    0,
+                    max_value * 1.15
+                )
             )
             + theme_minimal()
             + theme(
@@ -61,9 +105,25 @@ class BarPlot(BasePlot):
                     rotation=45,
                     ha="right"
                 ),
-                figure_size=(8, 5)
+                legend_position="none"
             )
         )
+
+        if missing_total > 0:
+
+            plot = plot + geom_label(
+                aes(
+                    x=category_count - 0.35,
+                    y=max_value * 1.08
+                ),
+                label=(
+                    f"Sin dato: {missing_total:,} "
+                    f"({missing_percentage:.2f} %)"
+                ),
+                inherit_aes=False,
+                ha="right",
+                va="center"
+            )
 
         self.save(
             plot,

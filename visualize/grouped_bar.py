@@ -1,3 +1,5 @@
+import polars as pl
+
 from plotnine import (
     ggplot,
     aes,
@@ -24,9 +26,18 @@ class GroupedBarPlot(BasePlot):
         filename
     ):
 
+        plot_data = (
+            data
+            .filter(
+                pl.col(category_col).is_not_null()
+                & pl.col(fill_col).is_not_null()
+            )
+            .to_pandas()
+        )
+
         plot = (
             ggplot(
-                data.to_pandas(),
+                plot_data,
                 aes(
                     x=category_col,
                     y=value_col,
