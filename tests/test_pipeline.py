@@ -32,7 +32,7 @@ def test_status_extract_distribution():
 
     df = pl.DataFrame(
         {
-            "status_extract": [
+            "worker_status": [
                 "SUCCESS",
                 "SUCCESS",
                 "FAILED"
@@ -45,7 +45,7 @@ def test_status_extract_distribution():
     result = (
         metrics
         .status_extract_distribution()
-        .sort("status_extract")
+        .sort("worker_status")
     )
 
     assert result.height == 2
@@ -56,16 +56,16 @@ def test_status_extract_distribution():
     }
 
     for row in result.to_dicts():
-        assert row["total"] == expected[row["status_extract"]]
+        assert row["total"] == expected[row["worker_status"]]
 
 def test_status_solar_distribution():
 
     df = pl.DataFrame(
         {
-            "status_solar": [
-                "INDEXED",
-                "INDEXED",
-                "FAILED"
+            "status_original": [
+                True,
+                True,
+                False
             ]
         }
     )
@@ -75,13 +75,13 @@ def test_status_solar_distribution():
     result = metrics.status_solar_distribution()
 
     result_dict = {
-        row["status_solar"]: row["total"]
+        row["status_original"]: row["total"]
         for row in result.to_dicts()
     }
 
     assert result_dict == {
-        "INDEXED": 2,
-        "FAILED": 1
+        True: 2,
+        False: 1
     }
 
 
@@ -121,7 +121,7 @@ def test_extract_status_by_worker():
                 "worker-01",
                 "worker-02"
             ],
-            "status_extract": [
+            "worker_status": [
                 "SUCCESS",
                 "FAILED",
                 "SUCCESS"
@@ -163,7 +163,7 @@ def test_extract_success_trend():
     df = pl.DataFrame(
         {
             "date_process": TEST_DATES,
-            "status_extract": [
+            "worker_status": [
                 "SUCCESS",
                 "FAILED",
                 "SUCCESS",
@@ -191,7 +191,7 @@ def test_extract_failed_trend():
     df = pl.DataFrame(
         {
             "date_process": TEST_DATES,
-            "status_extract": [
+            "worker_status": [
                 "SUCCESS",
                 "FAILED",
                 "FAILED",

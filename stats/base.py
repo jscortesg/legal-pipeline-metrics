@@ -17,4 +17,3 @@ class MetricsDataset:
         # opcionales
         self.cuaderno = dfs["cuaderno"]
         self.expediente = dfs["expediente"]
-        self.auditoria = dfs["auditoria_generacion"]

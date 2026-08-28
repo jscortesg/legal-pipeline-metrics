@@ -76,7 +76,7 @@ class InventoryMetrics(MetricsDataset):
                         ]
                     ),
                     on="doc_id",
-                    how="left"
+                    how="inner"
                 )
                 .filter(
                     pl.col("magistrado_fiscal")

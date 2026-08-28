@@ -10,7 +10,7 @@ class InfrastructureMetrics(MetricsDataset):
     def _processed(self):
 
         return self.extraccion.filter(
-            pl.col("status_extract") != "PENDING"
+            pl.col("worker_status") != "processing"
         )
 
     def _worker_metric(

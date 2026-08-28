@@ -28,7 +28,6 @@ def build_inventory_metrics(
             ),
             "cuaderno": pl.DataFrame(),
             "expediente": pl.DataFrame(),
-            "auditoria_generacion": pl.DataFrame(),
         }
     )
 

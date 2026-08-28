@@ -67,7 +67,7 @@ class DashboardCharts:
 
         self.bar.create(
             data=self.pipeline.status_extract_distribution(),
-            category_col="status_extract",
+            category_col="worker_status",
             value_col="total",
             title="Estado de extracción",
             filename="status_extract.png"
@@ -75,7 +75,7 @@ class DashboardCharts:
 
         self.bar.create(
             data=self.pipeline.status_solar_distribution(),
-            category_col="status_solar",
+            category_col="status_original",
             value_col="total",
             title="Estado Solar",
             filename="status_solar.png"
@@ -92,7 +92,7 @@ class DashboardCharts:
         self.grouped.create(
             data=self.pipeline.extract_status_by_worker(),
             category_col="worker_host",
-            fill_col="status_extract",
+            fill_col="worker_status",
             value_col="total",
             title="Extracciones por worker",
             filename="extract_status_worker.png"
@@ -101,7 +101,7 @@ class DashboardCharts:
         self.grouped.create(
             data=self.pipeline.solar_status_by_worker(),
             category_col="worker_host",
-            fill_col="status_solar",
+            fill_col="status_original",
             value_col="total",
             title="Estado Solr por worker",
             filename="solar_status_worker.png"

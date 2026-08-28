@@ -101,7 +101,7 @@ class PipelineMetrics(MetricsDataset):
 
         if status_filter is not None:
             df = df.filter(
-                pl.col("status_extract") == status_filter
+                pl.col("worker_status") == status_filter
             )
 
         return (
@@ -149,7 +149,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._distribution(
-            "status_extract"
+            "worker_status"
         )
 
     def status_solar_distribution(
@@ -157,7 +157,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._distribution(
-            "status_solar"
+            "status_original"
         )
 
     def vector_distribution(
@@ -173,7 +173,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._worker_distribution(
-            "status_extract"
+            "worker_status"
         )
 
     def solar_status_by_worker(
@@ -181,7 +181,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._worker_distribution(
-            "status_solar"
+            "status_original"
         )
 
     def processing_trend(
@@ -196,7 +196,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend(
-            pl.col("status_extract") == "SUCCESS"
+            pl.col("worker_status") == "SUCCESS"
         )
 
 
@@ -205,7 +205,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend(
-            pl.col("status_extract") == "FAILED"
+            pl.col("worker_status") == "FAILED"
         )
 
 

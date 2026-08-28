@@ -1,32 +1,8 @@
 services:
 
-  postgres:
-
-    build:
-      context: .
-      dockerfile: postgres/Dockerfile
-
-    container_name: legal-postgres
-
-    environment:
-      POSTGRES_DB: legal_pipeline_prod
-      POSTGRES_USER: legal_user
-      POSTGRES_PASSWORD: legal_password
-
-    ports:
-      - "5432:5432"
-
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-    restart: unless-stopped
-
   dashboard:
 
     build: .
-
-    depends_on:
-      - postgres
 
     env_file:
       - .env
@@ -38,6 +14,3 @@ services:
       - ./output:/app/output
 
     restart: unless-stopped
-
-volumes:
-  postgres_data:
