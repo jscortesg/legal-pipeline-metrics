@@ -164,14 +164,14 @@ def test_extract_success_trend():
         {
             "date_process": TEST_DATES,
             "worker_status": [
-                "SUCCESS",
-                "FAILED",
-                "SUCCESS",
-                "SUCCESS",
-                "FAILED",
-                "SUCCESS",
-                "SUCCESS",
-                "FAILED"
+                "done",
+                "error",
+                "done",
+                "done",
+                "error",
+                "done",
+                "done",
+                "error"
             ]
         }
     )
@@ -192,14 +192,14 @@ def test_extract_failed_trend():
         {
             "date_process": TEST_DATES,
             "worker_status": [
-                "SUCCESS",
-                "FAILED",
-                "FAILED",
-                "SUCCESS",
-                "FAILED",
-                "SUCCESS",
-                "FAILED",
-                "SUCCESS"
+                "done",
+                "error",
+                "error",
+                "done",
+                "error",
+                "done",
+                "error",
+                "done"
             ]
         }
     )

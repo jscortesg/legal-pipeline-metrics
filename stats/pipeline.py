@@ -196,7 +196,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend(
-            pl.col("worker_status") == "SUCCESS"
+            pl.col("worker_status") == "done"
         )
 
 
@@ -205,7 +205,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend(
-            pl.col("worker_status") == "FAILED"
+            pl.col("worker_status") == "error"
         )
 
 
@@ -229,7 +229,7 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend_by_worker(
-            "SUCCESS"
+            "done"
         )
 
 
@@ -238,5 +238,5 @@ class PipelineMetrics(MetricsDataset):
     ) -> pl.DataFrame:
 
         return self._trend_by_worker(
-            "FAILED"
+            "error"
         )

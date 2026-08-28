@@ -6,9 +6,11 @@ from plotnine import (
     xlab,
     ylab,
     scale_color_manual,
+    scale_x_datetime,
     labs,
     theme,
     element_text,
+    element_blank,
     theme_minimal
 )
 
@@ -71,13 +73,21 @@ class TimelineChart(BasePlot):
                     color="serie"
                 )
             )
-            + geom_line(size=1.2)
-            + geom_point(size=1)
+            + geom_line(
+                size=1.1
+            )
+            + geom_point(
+                size=0.8
+            )
             + scale_color_manual(
                 values={
                     "Diario": "#B0B0B0",
                     "Promedio móvil (7 días)": "#1F77B4"
                 }
+            )
+            + scale_x_datetime(
+                date_breaks="1 month",
+                date_labels="%Y-%m"
             )
             + labs(
                 title=title,
@@ -90,7 +100,9 @@ class TimelineChart(BasePlot):
                 axis_text_x=element_text(
                     rotation=45,
                     ha="right"
-                )
+                ),
+                legend_position="right",
+                legend_title=element_blank()
             )
         )
 
